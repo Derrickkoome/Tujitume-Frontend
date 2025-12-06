@@ -3,7 +3,7 @@ import PostGigForm from './PostGigForm';
 
 const PostGigPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-10">
@@ -16,8 +16,8 @@ const PostGigPage = () => {
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white shadow-xl rounded-2xl border border-gray-100 px-8 py-10">
-          <div className="mb-8">
+        <div className="bg-white shadow-xl rounded-2xl border border-gray-100 px-8 py-10" style={{ background: 'linear-gradient(to bottom, #FFF7F3, #FFFFFF)' }}>
+          <div className="mb-8" style={{ backgroundColor: '#FFF3EB', padding: '20px', borderRadius: '12px', margin: '-32px -32px 32px -32px' }}>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Gig Details</h2>
             <p className="text-gray-600">Fill in the information below to create your gig listing.</p>
           </div>

@@ -19,7 +19,7 @@ const FormSelect = ({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 appearance-none bg-white ${
+          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 appearance-none bg-white text-gray-900 ${
             error
               ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
               : 'border-gray-200'

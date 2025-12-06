@@ -9,7 +9,7 @@ const FormField = ({
   required = false,
   rows
 }) => {
-  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 ${
+  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 bg-white text-gray-900 placeholder-gray-500 ${
     error
       ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
       : 'border-gray-200'
