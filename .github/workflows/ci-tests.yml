@@ -2,9 +2,7 @@ name: CI - Tests
 
 on:
   pull_request:
-    branches: [ main, ft-tailwind-modern, ft-responsive-design, ft-accessibility-testing ]
-  push:
-    branches: [ ft-accessibility-testing ]
+    branches: [ main ]
 
 jobs:
   test:
