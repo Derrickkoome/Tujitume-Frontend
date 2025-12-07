@@ -39,18 +39,22 @@ const PostGigForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Categories for dropdown
+  // Categories for casual jobs
   const categories = [
-    { value: 'Web Development', label: 'Web Development' },
-    { value: 'Mobile Development', label: 'Mobile Development' },
-    { value: 'Graphic Design', label: 'Graphic Design' },
-    { value: 'Content Writing', label: 'Content Writing' },
-    { value: 'Digital Marketing', label: 'Digital Marketing' },
-    { value: 'Video Editing', label: 'Video Editing' },
-    { value: 'Data Entry', label: 'Data Entry' },
-    { value: 'Virtual Assistant', label: 'Virtual Assistant' },
-    { value: 'Translation', label: 'Translation' },
-    { value: 'Other', label: 'Other' }
+    { value: 'Gardening', label: '🌿 Gardening & Landscaping' },
+    { value: 'Cleaning', label: '🧹 House Cleaning' },
+    { value: 'Car Washing', label: '🚗 Car Washing & Detailing' },
+    { value: 'Moving', label: '📦 Moving & Packing' },
+    { value: 'Painting', label: '🎨 Painting & Decoration' },
+    { value: 'Plumbing', label: '🔧 Plumbing & Repairs' },
+    { value: 'Electrical', label: '💡 Electrical Work' },
+    { value: 'Cooking', label: '👨‍🍳 Cooking & Catering' },
+    { value: 'Pet Care', label: '🐕 Pet Care & Walking' },
+    { value: 'Laundry', label: '👔 Laundry & Ironing' },
+    { value: 'Errands', label: '🛒 Errands & Shopping' },
+    { value: 'Child Care', label: '👶 Child Care & Babysitting' },
+    { value: 'Delivery', label: '🚚 Delivery & Transport' },
+    { value: 'Other', label: '📋 Other Services' }
   ];
 
   // Budget type options
