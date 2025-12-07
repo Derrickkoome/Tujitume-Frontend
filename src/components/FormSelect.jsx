@@ -19,10 +19,10 @@ const FormSelect = ({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-400 appearance-none bg-white ${
+          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-300 appearance-none bg-white dark:bg-gray-900 ${
             error
               ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-              : 'border-gray-200'
+              : 'border-gray-200 dark:border-gray-700'
           }`}
         >
           <option value="">{placeholder || 'Select an option'}</option>
@@ -33,7 +33,7 @@ const FormSelect = ({
           ))}
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-          <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-5 h-5 text-gray-400 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </div>
