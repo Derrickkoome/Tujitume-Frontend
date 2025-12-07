@@ -1,11 +1,10 @@
-@import "tailwindcss";
-
-@theme {
-  --color-primary: #646cff;
-  --color-secondary: #535bf2;
-}
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
 :root {
+  --color-primary: #646cff;
+  --color-secondary: #535bf2;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
