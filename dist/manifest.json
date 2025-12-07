@@ -1,7 +1,7 @@
 {
-  "name": "Tujitume - Freelance Gig Platform",
+  "name": "Tujitume - Casual Jobs Platform",
   "short_name": "Tujitume",
-  "description": "A modern freelance gig platform connecting workers with opportunities",
+  "description": "Find short-term casual jobs like gardening, cleaning, car washing and more",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
