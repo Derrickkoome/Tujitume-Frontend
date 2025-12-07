@@ -66,10 +66,10 @@ export default function InstallPWA() {
   if (!showInstallBanner) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-orange-600 to-orange-700 text-white p-4 shadow-lg z-50 animate-slide-up">
+    <div className="fixed bottom-0 left-0 right-0 bg-linear-to-r from-orange-600 to-orange-700 text-white p-4 shadow-lg z-50 animate-slide-up">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shrink-0">
             <span className="text-2xl">📱</span>
           </div>
           <div>

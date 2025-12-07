@@ -28,10 +28,13 @@ export default function GigList() {
     setError(null)
     try {
       const res = await api.get('/api/gigs')
-      setGigs(res.data || [])
+      // Ensure we always have an array
+      const gigsData = Array.isArray(res.data) ? res.data : []
+      setGigs(gigsData)
     } catch (err) {
       console.error('Failed to fetch gigs', err)
       setError(err)
+      setGigs([]) // Set empty array on error
     } finally {
       setLoading(false)
     }

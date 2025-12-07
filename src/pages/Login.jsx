@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuth from '../hooks/useAuth';
@@ -9,6 +9,13 @@ const Login = () => {
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const from = location.state?.from?.pathname || '/';
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, loading, navigate, from]);
 
   const handleSignIn = async () => {
     try {
@@ -42,7 +49,6 @@ const Login = () => {
   }
 
   if (user) {
-    navigate(from, { replace: true });
     return null;
   }
 
