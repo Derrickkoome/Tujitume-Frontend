@@ -8,6 +8,7 @@ import GigDetails from '../pages/GigDetails'
 import Profile from '../pages/Profile'
 import Dashboard from '../pages/Dashboard'
 import ApplicationsList from '../pages/ApplicationsList'
+import GigApplicants from '../pages/GigApplicants'
 import useAuth from '../hooks/useAuth'
 
 function ProtectedRoute({ children }) {
@@ -54,6 +55,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <ApplicationsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gigs/:gigId/applicants"
+        element={
+          <ProtectedRoute>
+            <GigApplicants />
           </ProtectedRoute>
         }
       />
