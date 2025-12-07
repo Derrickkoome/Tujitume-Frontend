@@ -1,80 +1,60 @@
 import React, { useEffect, useState } from 'react';
-import { auth, googleProvider } from '../firebaseConfig';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import useAuth from '../hooks/useAuth';
 
 export default function FirebaseAuth() {
-  const [user, setUser] = useState(null);
+  const { user, loading, getIdToken, signIn, signOut } = useAuth();
   const [idTokenPreview, setIdTokenPreview] = useState('');
   const backendUrl = import.meta.env.VITE_AUTH_BACKEND_URL || '/api/auth/session';
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u) {
+    let mounted = true;
+    async function sendToken(u) {
+      if (!u) return;
+      try {
+        const token = await getIdToken();
+        if (!mounted) return;
+        setIdTokenPreview(token ? token.slice(0, 40) + '...' : '');
+        // auto-send token to backend
         try {
-          const token = await u.getIdToken();
-          setIdTokenPreview(token.slice(0, 40) + '...');
-          // automatically send token to backend after sign-in
-          try {
-            const res = await fetch(backendUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-              body: JSON.stringify({ uid: u.uid })
-            });
-            const data = await res.json().catch(() => null);
-            console.log('Auto backend response:', data);
-          } catch (err) {
-            console.warn('Auto-send token failed', err);
-          }
-        } catch (e) {
-          console.error('Error getting token', e);
-          setIdTokenPreview('error');
+          const res = await fetch(backendUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ uid: u.uid })
+          });
+          const data = await res.json().catch(() => null);
+          console.log('Auto backend response:', data);
+        } catch (err) {
+          console.warn('Auto-send token failed', err);
         }
-      } else {
-        setIdTokenPreview('');
+      } catch (e) {
+        console.error('Error getting token', e);
+        setIdTokenPreview('error');
       }
-    });
-    return () => unsub();
-  }, []);
-
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log('Signed in user:', result.user);
-    } catch (err) {
-      console.error('Sign-in error', err);
     }
-  };
 
-  const signOutUser = async () => {
-    try {
-      await signOut(auth);
-      console.log('Signed out');
-    } catch (err) {
-      console.error('Sign-out error', err);
-    }
-  };
+    if (user) sendToken(user);
+    if (!user) setIdTokenPreview('');
 
-  const sendTokenToBackend = async () => {
-    if (!user) return;
+    return () => { mounted = false; };
+  }, [user, getIdToken, backendUrl]);
+
+  const handleSignIn = async () => {
     try {
-      const token = await user.getIdToken();
-      const res = await fetch(backendUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ uid: user.uid })
-      });
-      const data = await res.json();
-      console.log('Backend response:', data);
-      alert('Backend response: ' + JSON.stringify(data));
+      await signIn();
     } catch (e) {
-      console.error('Error sending token to backend', e);
-      alert('Error sending token to backend: ' + e.message);
+      console.error('Sign-in failed', e);
     }
   };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (e) {
+      console.error('Sign-out failed', e);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="max-w-md mx-auto">
@@ -83,7 +63,7 @@ export default function FirebaseAuth() {
         <div className="flex items-center gap-2">
           {!user ? (
             <button
-              onClick={signInWithGoogle}
+              onClick={handleSignIn}
               className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
               aria-label="Sign in with Google"
             >
@@ -91,7 +71,7 @@ export default function FirebaseAuth() {
             </button>
           ) : (
             <button
-              onClick={signOutUser}
+              onClick={handleSignOut}
               className="px-3 py-2 bg-gray-100 text-gray-800 rounded-md text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
               aria-label="Sign out"
             >
@@ -101,7 +81,25 @@ export default function FirebaseAuth() {
 
           {user && (
             <button
-              onClick={sendTokenToBackend}
+              onClick={async () => {
+                try {
+                  const token = await getIdToken();
+                  const res = await fetch(backendUrl, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ uid: user.uid })
+                  });
+                  const data = await res.json();
+                  console.log('Backend response:', data);
+                  alert('Backend response: ' + JSON.stringify(data));
+                } catch (e) {
+                  console.error('Error sending token to backend', e);
+                  alert('Error sending token to backend: ' + e.message);
+                }
+              }}
               className="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400"
               aria-label="Send ID token to backend"
             >

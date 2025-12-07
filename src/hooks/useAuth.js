@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { onAuthStateChanged, signInWithPopup as fbSignInWithPopup, signOut as fbSignOut } from 'firebase/auth';
+import { auth, googleProvider } from '../firebaseConfig';
 
 export default function useAuth() {
   const [user, setUser] = useState(null);
@@ -24,5 +24,26 @@ export default function useAuth() {
     }
   }, []);
 
-  return { user, loading, getIdToken };
+  const signIn = useCallback(async () => {
+    try {
+      const result = await fbSignInWithPopup(auth, googleProvider);
+      return result.user;
+    } catch (e) {
+      console.error('signIn error', e);
+      throw e;
+    }
+  }, []);
+
+  const signOut = useCallback(async () => {
+    try {
+      await fbSignOut(auth);
+    } catch (e) {
+      console.error('signOut error', e);
+      throw e;
+    }
+  }, []);
+
+  const isAuthenticated = Boolean(user);
+
+  return { user, loading, getIdToken, signIn, signOut, isAuthenticated };
 }
