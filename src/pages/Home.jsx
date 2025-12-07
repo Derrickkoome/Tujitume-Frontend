@@ -24,9 +24,9 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="w-full min-h-screen bg-orange-50">
       {/* Hero Section */}
-      <section className="pt-20 pb-24 px-4">
+      <section className="w-full pt-20 pb-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <div className="mb-8 inline-block">
@@ -64,7 +64,7 @@ const Home = () => {
       </section>
 
       {/* Latest Gigs Section */}
-      <section className="pb-20 px-4">
+      <section className="w-full pb-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Latest Gigs Available</h2>
 

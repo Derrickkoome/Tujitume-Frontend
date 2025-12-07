@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import useAuth from '../hooks/useAuth'
 
 export default function Navbar() {
@@ -11,9 +12,11 @@ export default function Navbar() {
     try {
       await signOut();
       setDropdownOpen(false);
+      toast.success('Signed out successfully');
       navigate('/');
-    } catch (e) {
-      console.error('Sign-out failed', e);
+    } catch (error) {
+      console.error('Sign-out failed', error);
+      toast.error('Failed to sign out');
     }
   };
 
