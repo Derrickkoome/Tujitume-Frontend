@@ -1,9 +1,11 @@
 // Service Worker for Tujitume Progressive Web App
-const CACHE_NAME = 'tujitume-v1';
+const CACHE_NAME = 'tujitume-v2';
+const GIGS_CACHE = 'tujitume-gigs-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/offline.html'
 ];
 
 // Install event - cache essential assets
@@ -47,23 +49,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // API requests - network first
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/gigs')) {
+  // API requests - network first with offline support
+  if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Cache successful API responses
+          // Cache successful API responses, especially gigs
           if (response.ok) {
             const responseToCache = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
+            const cacheName = url.pathname.includes('/gigs') ? GIGS_CACHE : CACHE_NAME;
+            caches.open(cacheName).then((cache) => {
               cache.put(request, responseToCache);
             });
           }
           return response;
         })
-        .catch(() => {
+        .catch(async () => {
           // Return cached response if network fails
-          return caches.match(request);
+          const cachedResponse = await caches.match(request);
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Return offline fallback for navigation requests
+          if (request.mode === 'navigate') {
+            return caches.match('/offline.html');
+          }
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
         })
     );
     return;
