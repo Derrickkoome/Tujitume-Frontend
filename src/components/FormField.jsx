@@ -7,17 +7,21 @@ const FormField = ({
   placeholder,
   error,
   required = false,
-  rows
+  rows,
+  helperText,
+  min,
+  max,
+  step
 }) => {
-  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-300 bg-white dark:bg-gray-900 ${
+  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-300 bg-white ${
     error
       ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-200 dark:border-gray-700'
+      : 'border-gray-200'
   }`;
 
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">
+      <label htmlFor={name} className="block text-sm font-semibold text-gray-800 mb-1">
         {label} {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       {type === 'textarea' ? (
@@ -29,6 +33,7 @@ const FormField = ({
           onChange={onChange}
           className={`${baseInputClasses} resize-none`}
           placeholder={placeholder}
+          required={required}
         />
       ) : (
         <input
@@ -39,7 +44,14 @@ const FormField = ({
           onChange={onChange}
           className={baseInputClasses}
           placeholder={placeholder}
+          required={required}
+          min={min}
+          max={max}
+          step={step}
         />
+      )}
+      {helperText && !error && (
+        <p className="text-xs text-gray-500">{helperText}</p>
       )}
       {error && (
         <p className="text-sm text-red-600 font-medium flex items-center" role="alert" aria-live="assertive">

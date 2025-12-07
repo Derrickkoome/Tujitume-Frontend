@@ -1,22 +1,27 @@
 import { Toaster } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 import PostGigForm from './PostGigForm';
 
 const PostGigPage = () => {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-orange-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-emerald-200 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <span>✨</span>
+            <span>Share Your Expertise</span>
+          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-            Post Your Gig
+            Post a <span className="text-orange-500">Gig</span>
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Share your services with our community. Create a compelling gig that showcases your expertise and attracts the right clients.
+            Connect with clients looking for your skills. Create a compelling gig that showcases what you can deliver.
           </p>
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white shadow-xl rounded-2xl border border-gray-100 px-8 py-10">
+        <div className="bg-white shadow-lg rounded-2xl border border-gray-200 p-8 md:p-10">
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Gig Details</h2>
             <p className="text-gray-600">Fill in the information below to create your gig listing.</p>
@@ -28,10 +33,14 @@ const PostGigPage = () => {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500">
-            Need help? Check our{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-500 font-medium">
-              guidelines for creating effective gigs
-            </a>
+            Need help?{' '}
+            <Link to="/dashboard" className="text-orange-600 hover:text-orange-500 font-medium">
+              View your dashboard
+            </Link>
+            {' '}or{' '}
+            <Link to="/" className="text-orange-600 hover:text-orange-500 font-medium">
+              browse existing gigs
+            </Link>
           </p>
         </div>
       </div>
