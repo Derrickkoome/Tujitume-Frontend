@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '../lib/api'
 import useAuth from '../hooks/useAuth'
+import ReviewForm from '../components/ReviewForm'
 
 export default function GigApplicants() {
   const { gigId } = useParams()
@@ -13,6 +14,8 @@ export default function GigApplicants() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [processingId, setProcessingId] = useState(null)
+  const [completing, setCompleting] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -89,6 +92,33 @@ export default function GigApplicants() {
     }
   }
 
+  const handleMarkComplete = async () => {
+    if (!window.confirm('Are you sure you want to mark this gig as completed? This will allow you to leave a review.')) {
+      return
+    }
+
+    setCompleting(true)
+    try {
+      await api.post(`/api/gigs/${gigId}/complete`)
+      toast.success('Gig marked as completed!')
+      // Refresh data
+      fetchData()
+      // Show review form
+      setShowReviewForm(true)
+    } catch (err) {
+      console.error('Failed to mark gig as complete', err)
+      const errorMsg = err.response?.data?.detail || 'Failed to mark gig as complete'
+      toast.error(errorMsg)
+    } finally {
+      setCompleting(false)
+    }
+  }
+
+  const handleReviewSubmitted = () => {
+    setShowReviewForm(false)
+    toast.success('Thank you for your review!')
+  }
+
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -144,13 +174,47 @@ export default function GigApplicants() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Applications for: {gig?.title}
-        </h1>
-        <p className="text-gray-600">
-          {applications.length} {applications.length === 1 ? 'application' : 'applications'} received
-        </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Applications for: {gig?.title}
+            </h1>
+            <p className="text-gray-600">
+              {applications.length} {applications.length === 1 ? 'application' : 'applications'} received
+            </p>
+          </div>
+          
+          {/* Mark Complete Button */}
+          {hasSelectedApplicant && gig?.is_completed !== 'true' && (
+            <button
+              onClick={handleMarkComplete}
+              disabled={completing}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold"
+            >
+              {completing ? 'Marking Complete...' : 'Mark Gig as Complete'}
+            </button>
+          )}
+          
+          {gig?.is_completed === 'true' && (
+            <div className="px-4 py-2 bg-green-100 text-green-800 rounded-lg font-semibold">
+              ✓ Completed
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Review Form */}
+      {gig?.is_completed === 'true' && showReviewForm && hasSelectedApplicant && (
+        <div className="mb-8">
+          <ReviewForm
+            gigId={parseInt(gigId)}
+            reviewedUserId={applications.find(app => app.status === 'accepted')?.applicant_id}
+            reviewedUserName={applications.find(app => app.status === 'accepted')?.applicant?.name || 'Worker'}
+            onSuccess={handleReviewSubmitted}
+            onCancel={() => setShowReviewForm(false)}
+          />
+        </div>
+      )}
 
       {/* Applications List */}
       {applications.length === 0 ? (
