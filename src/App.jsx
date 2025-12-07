@@ -1,13 +1,9 @@
-import PostGigPage from './components/PostGigPage'
-import FirebaseAuth from './components/FirebaseAuth'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
   return (
-    <div className="p-6">
-      <FirebaseAuth />
-      <div className="mt-6">
-        <PostGigPage />
-      </div>
+    <div className="min-h-screen">
+      <AppRoutes />
     </div>
   )
 }
