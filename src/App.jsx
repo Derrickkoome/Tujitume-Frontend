@@ -3,9 +3,9 @@ import Navbar from './components/Navbar'
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-gray-900">
+    <div className="min-h-screen">
       <Navbar />
-      <main className="pt-6">
+      <main>
         <AppRoutes />
       </main>
     </div>

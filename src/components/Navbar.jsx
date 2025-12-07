@@ -18,20 +18,23 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50">
+    <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-xl font-bold text-indigo-600">Tujitume</Link>
-            <div className="hidden sm:flex gap-4">
-              <Link to="/gigs" className="text-sm text-gray-600 hover:text-gray-900 dark:hover:text-white">Browse</Link>
-              <Link to="/post-gig" className="text-sm text-gray-600 hover:text-gray-900 dark:hover:text-white">Post Gig</Link>
+            <Link to="/" className="text-xl font-bold text-gray-900">Tujitume</Link>
+            <div className="hidden sm:flex gap-6">
+              <Link to="/gigs" className="text-sm text-gray-600 hover:text-gray-900">Browse</Link>
+              <Link to="/post-gig" className="text-sm text-gray-600 hover:text-gray-900">Post Gig</Link>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             {!loading && !user && (
-              <Link to="/login" className="text-sm px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">Sign in</Link>
+              <>
+                <Link to="/login" className="text-sm px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800">Login</Link>
+                <Link to="/post-gig" className="text-sm px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Post a Gig</Link>
+              </>
             )}
 
             {user && (
@@ -46,13 +49,13 @@ export default function Navbar() {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-100 dark:border-gray-700 z-10">
-                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Profile</Link>
-                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Dashboard</Link>
-                    <Link to="/applications" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">My Applications</Link>
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg border border-gray-100 z-10">
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</Link>
+                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Dashboard</Link>
+                    <Link to="/applications" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Applications</Link>
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-100 dark:border-gray-700"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-t border-gray-100"
                     >
                       Sign out
                     </button>

@@ -42,6 +42,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip Vite dev server requests (HMR and modules)
+  if (url.pathname.includes('@vite') || url.pathname.includes('@react-refresh') || url.pathname.includes('.jsx')) {
+    return;
+  }
+
   // API requests - network first
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/gigs')) {
     event.respondWith(
@@ -49,8 +54,10 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           // Cache successful API responses
           if (response.ok) {
-            const cache = caches.open(CACHE_NAME);
-            cache.then((c) => c.put(request, response.clone()));
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+            });
           }
           return response;
         })
@@ -69,18 +76,23 @@ self.addEventListener('fetch', (event) => {
         return response;
       }
 
-      return fetch(request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'error') {
+      return fetch(request)
+        .then((response) => {
+          if (!response || response.status !== 200 || response.type === 'error') {
+            return response;
+          }
+
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseToCache);
+          });
+
           return response;
-        }
-
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(request, responseToCache);
+        })
+        .catch(() => {
+          // Silently fail for dev assets
+          return new Response('Offline', { status: 503 });
         });
-
-        return response;
-      });
     })
   );
 });

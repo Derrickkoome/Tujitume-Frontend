@@ -2,3 +2,4 @@ node_modules
 # Local environment variables
 .env.local
 .env
+node_modules

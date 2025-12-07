@@ -1,37 +1,121 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../lib/api'
 
 const Home = () => {
-  return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">Welcome to Tujitume</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">Find gigs or hire skilled workers in your area.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/gigs" className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Browse Gigs</Link>
-            <Link to="/post-gig" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300">Post a Gig</Link>
-          </div>
-        </div>
+  const [gigs, setGigs] = useState([])
+  const [loading, setLoading] = useState(true)
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition p-6">
-            <div className="text-3xl mb-3">📝</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Post a Gig</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Create a listing to share the work you need done.</p>
+  useEffect(() => {
+    fetchLatestGigs()
+  }, [])
+
+  const fetchLatestGigs = async () => {
+    try {
+      const response = await api.get('/gigs')
+      const gigsArray = Array.isArray(response.data) ? response.data : []
+      // Get last 3 gigs
+      setGigs(gigsArray.slice(-3).reverse())
+    } catch (error) {
+      console.error('Error fetching gigs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-orange-50">
+      {/* Hero Section */}
+      <section className="pt-20 pb-24 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Badge */}
+          <div className="mb-8 inline-block">
+            <span className="bg-emerald-200 text-emerald-800 text-sm font-medium px-4 py-2 rounded-full">
+              Connecting Kenyan youth with Skills to Income
+            </span>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition p-6">
-            <div className="text-3xl mb-3">🔍</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Browse Gigs</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Explore available gigs and apply for work.</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition p-6">
-            <div className="text-3xl mb-3">👥</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Manage Applications</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Review applicants and select the best fit.</p>
+
+          {/* Main Headline */}
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            Turn Your Skills Into <span className="text-orange-500">Income</span>
+          </h1>
+
+          {/* Subheading */}
+          <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
+            Post casual jobs like cleaning, delivery, errands, and small repairs. Connect with local workers who can get things done quickly and reliably.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/post-gig"
+              className="px-8 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition"
+            >
+              Post a Gig Now
+            </Link>
+            <Link
+              to="/gigs"
+              className="px-8 py-3 border-2 border-orange-500 text-orange-500 rounded-lg font-semibold hover:bg-orange-50 transition"
+            >
+              Find Work
+            </Link>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Latest Gigs Section */}
+      <section className="pb-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Latest Gigs Available</h2>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Loading gigs...</p>
+            </div>
+          ) : gigs.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {gigs.map((gig) => (
+                <Link
+                  key={gig.id}
+                  to={`/gigs/${gig.id}`}
+                  className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+                >
+                  <div className="p-6">
+                    {/* Gig Category */}
+                    <div className="text-orange-500 text-sm font-semibold mb-2">
+                      {gig.category || 'General'}
+                    </div>
+                    {/* Price */}
+                    <div className="text-orange-500 text-xl font-bold mb-3">
+                      KES {gig.budget}
+                    </div>
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                      {gig.title}
+                    </h3>
+                    {/* Description */}
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {gig.description}
+                    </p>
+                    {/* Location & Time */}
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>{gig.location || 'Nairobi'}</span>
+                      <span>{Math.floor(Math.random() * 24) || 2} hours ago</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-lg">
+              <p className="text-gray-500 mb-4">No gigs available yet</p>
+              <Link to="/post-gig" className="text-orange-500 font-semibold hover:underline">
+                Be the first to post a gig
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   )
 }
