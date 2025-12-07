@@ -24,6 +24,22 @@ export default function GigDetails() {
     fetchGigDetails()
   }, [id])
 
+  useEffect(() => {
+    if (user && gig && gig.owner_id !== user.uid) {
+      checkIfApplied()
+    }
+  }, [user, gig])
+
+  const checkIfApplied = async () => {
+    try {
+      const res = await api.get('/api/users/me/applications')
+      const hasApplied = res.data.some(app => app.gig_id === parseInt(id))
+      setApplied(hasApplied)
+    } catch (err) {
+      console.warn('Could not check application status', err)
+    }
+  }
+
   const fetchGigDetails = async () => {
     setLoading(true)
     setError(null)
