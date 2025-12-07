@@ -27,5 +27,5 @@ test('renders gig details and apply button', async () => {
   )
 
   await waitFor(() => expect(screen.getByText('Gig One')).toBeInTheDocument())
-  expect(screen.getByText('Apply')).toBeInTheDocument()
+  expect(screen.getByText(/Apply for This Gig/i)).toBeInTheDocument()
 })

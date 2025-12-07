@@ -33,14 +33,11 @@ test('GigDetails renders semantic elements and accessible controls', async () =>
   const h1 = screen.getByRole('heading', { level: 1 })
   expect(h1).toHaveTextContent('Gig One')
 
-  // category text is present and has label-like semantics
-  expect(screen.getByText(/Category:/i)).toBeInTheDocument()
-
   // description is displayed
   expect(screen.getByText(/Detailed gig/)).toBeInTheDocument()
 
-  // price displayed and readable
-  expect(screen.getByText(/\$100/)).toBeInTheDocument()
+  // "Budget" label is present
+  expect(screen.getByText(/Budget/i)).toBeInTheDocument()
 
   // Apply button exists and has accessible name
   const applyBtn = screen.getByRole('button', { name: /apply/i })

@@ -27,9 +27,9 @@ test('Navbar renders with accessible navigation and buttons', () => {
   const browseLink = screen.getByRole('link', { name: /browse/i })
   expect(browseLink).toBeInTheDocument()
 
-  // Sign in button should be present when user is not authenticated
-  const signInBtn = screen.getByRole('link', { name: /sign in/i })
-  expect(signInBtn).toBeInTheDocument()
+  // Login button should be present when user is not authenticated
+  const loginBtn = screen.getByRole('link', { name: /login/i })
+  expect(loginBtn).toBeInTheDocument()
 
   // All links should have href for keyboard navigation
   const allLinks = screen.getAllByRole('link')
@@ -45,9 +45,9 @@ test('Navbar displays user info when authenticated', () => {
     </MemoryRouter>
   )
 
-  // Sign in button should be present when user is not authenticated
-  const signInBtn = screen.getByRole('link', { name: /sign in/i })
-  expect(signInBtn).toBeInTheDocument()
+  // Login button should be present when user is not authenticated
+  const loginBtn = screen.getByRole('link', { name: /login/i })
+  expect(loginBtn).toBeInTheDocument()
 
   // All interactive elements are accessible via keyboard
   const allLinks = screen.getAllByRole('link')

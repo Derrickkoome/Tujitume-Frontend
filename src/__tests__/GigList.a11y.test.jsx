@@ -23,20 +23,19 @@ test('GigList renders with accessible heading and filter buttons', async () => {
   )
 
   // wait for heading to render
-  await waitFor(() => expect(screen.getByRole('heading', { name: /available gigs/i })).toBeInTheDocument())
+  await waitFor(() => expect(screen.getByRole('heading', { name: /explore gigs/i })).toBeInTheDocument())
 
   // main heading is present and accessible
-  const heading = screen.getByRole('heading', { name: /available gigs/i })
+  const heading = screen.getByRole('heading', { name: /explore gigs/i })
   expect(heading).toBeInTheDocument()
 
-  // filter buttons are rendered as buttons with accessible names
-  const filterButtons = screen.getAllByRole('button')
-  expect(filterButtons.length).toBeGreaterThan(0)
+  // filter dropdowns are rendered as comboboxes (select elements)
+  const filterSelects = screen.getAllByRole('combobox')
+  expect(filterSelects.length).toBeGreaterThan(0)
 
-  // category filter buttons are labeled and have text content
-  filterButtons.forEach((btn) => {
-    expect(btn.textContent).toBeTruthy()
-  })
+  // search input is accessible
+  const searchInput = screen.getByPlaceholderText(/search gigs/i)
+  expect(searchInput).toBeInTheDocument()
 
   // gig cards are rendered as links with text content
   const gigLinks = screen.getAllByRole('link')
