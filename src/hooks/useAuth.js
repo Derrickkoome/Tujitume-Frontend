@@ -1,5 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import { onAuthStateChanged, signInWithPopup as fbSignInWithPopup, signOut as fbSignOut, getIdToken } from 'firebase/auth';
+import { 
+  onAuthStateChanged, 
+  signInWithPopup as fbSignInWithPopup, 
+  signOut as fbSignOut, 
+  getIdToken,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile
+} from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseConfig';
 
 export default function useAuth() {
@@ -85,6 +94,39 @@ export default function useAuth() {
     }
   }, []);
 
+  const signUpWithEmail = useCallback(async (email, password, displayName) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      // Update display name if provided
+      if (displayName) {
+        await updateProfile(result.user, { displayName });
+      }
+      return result.user;
+    } catch (error) {
+      console.error('signUpWithEmail error', error);
+      throw error;
+    }
+  }, []);
+
+  const signInWithEmail = useCallback(async (email, password) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      return result.user;
+    } catch (error) {
+      console.error('signInWithEmail error', error);
+      throw error;
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('resetPassword error', error);
+      throw error;
+    }
+  }, []);
+
   const isAuthenticated = Boolean(user);
 
   return {
@@ -93,6 +135,9 @@ export default function useAuth() {
     token,
     getIdToken: getIdTokenForAPI,
     signIn,
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
     signOut,
     isAuthenticated,
   };

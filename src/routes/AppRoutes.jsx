@@ -2,6 +2,8 @@ import React from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
+import Signup from '../pages/Signup'
+import ForgotPassword from '../pages/ForgotPassword'
 import PostGigPage from '../components/PostGigPage'
 import GigList from '../pages/GigList'
 import GigDetails from '../pages/GigDetails'
@@ -24,6 +26,8 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/gigs" element={<GigList />} />
       <Route path="/gigs/:id" element={<GigDetails />} />
       <Route
