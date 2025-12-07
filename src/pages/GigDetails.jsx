@@ -233,12 +233,20 @@ export default function GigDetails() {
           {isOwner ? (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-blue-800 font-medium">This is your gig listing</p>
-              <Link 
-                to="/dashboard"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-block mt-2"
-              >
-                View applications in dashboard →
-              </Link>
+              <div className="flex gap-3 mt-3">
+                <Link 
+                  to={`/gigs/${id}/applicants`}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
+                >
+                  View Applications
+                </Link>
+                <Link 
+                  to="/dashboard"
+                  className="px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition font-semibold"
+                >
+                  Go to Dashboard
+                </Link>
+              </div>
             </div>
           ) : applied ? (
             <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
