@@ -14,6 +14,18 @@ export default function FirebaseAuth() {
         try {
           const token = await u.getIdToken();
           setIdTokenPreview(token.slice(0, 40) + '...');
+          // automatically send token to backend after sign-in
+          try {
+            const res = await fetch(backendUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ uid: u.uid })
+            });
+            const data = await res.json().catch(() => null);
+            console.log('Auto backend response:', data);
+          } catch (err) {
+            console.warn('Auto-send token failed', err);
+          }
         } catch (e) {
           console.error('Error getting token', e);
           setIdTokenPreview('error');
