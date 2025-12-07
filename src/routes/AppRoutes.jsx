@@ -3,6 +3,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
 import PostGigPage from '../components/PostGigPage'
+import GigList from '../pages/GigList'
+import GigDetails from '../pages/GigDetails'
 import useAuth from '../hooks/useAuth'
 
 function ProtectedRoute({ children }) {
@@ -26,6 +28,8 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/gigs" element={<GigList />} />
+      <Route path="/gigs/:id" element={<GigDetails />} />
       <Route path="*" element={<div className="p-6">Page not found</div>} />
     </Routes>
   )
