@@ -1,49 +1,77 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import api from '../lib/api';
+import useAuth from '../hooks/useAuth';
 import FormField from './FormField';
 import FormSelect from './FormSelect';
-import FileUpload from './FileUpload';
 import SubmitButton from './SubmitButton';
 
-// Validation schema
+// Validation schema matching backend requirements
 const gigSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  description: z.string().min(1, 'Description is required').max(1000, 'Description must be less than 1000 characters'),
+  title: z.string().min(5, 'Title must be at least 5 characters').max(200, 'Title must be less than 200 characters'),
+  description: z.string().min(20, 'Description must be at least 20 characters').max(5000, 'Description must be less than 5000 characters'),
   category: z.string().min(1, 'Category is required'),
-  pricing: z.string().min(1, 'Pricing is required'),
-  deliveryTime: z.string().min(1, 'Delivery time is required'),
+  budget: z.number().positive('Budget must be greater than 0'),
+  budget_type: z.enum(['fixed', 'hourly'], { errorMap: () => ({ message: 'Budget type must be fixed or hourly' }) }),
+  location: z.string().optional(),
+  skills_required: z.string().optional(),
+  deadline: z.string().optional(),
 });
 
 const PostGigForm = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: '',
-    pricing: '',
-    deliveryTime: '',
-    attachments: null,
+    budget: '',
+    budget_type: 'fixed',
+    location: '',
+    skills_required: '',
+    deadline: '',
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Categories for dropdown
+  // Categories for casual jobs
   const categories = [
-    { value: 'web-development', label: 'Web Development' },
-    { value: 'mobile-development', label: 'Mobile Development' },
-    { value: 'design', label: 'Design' },
-    { value: 'writing', label: 'Writing' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'consulting', label: 'Consulting' },
-    { value: 'other', label: 'Other' }
+    { value: 'Gardening', label: '🌿 Gardening & Landscaping' },
+    { value: 'Cleaning', label: '🧹 House Cleaning' },
+    { value: 'Car Washing', label: '🚗 Car Washing & Detailing' },
+    { value: 'Moving', label: '📦 Moving & Packing' },
+    { value: 'Painting', label: '🎨 Painting & Decoration' },
+    { value: 'Plumbing', label: '🔧 Plumbing & Repairs' },
+    { value: 'Electrical', label: '💡 Electrical Work' },
+    { value: 'Cooking', label: '👨‍🍳 Cooking & Catering' },
+    { value: 'Pet Care', label: '🐕 Pet Care & Walking' },
+    { value: 'Laundry', label: '👔 Laundry & Ironing' },
+    { value: 'Errands', label: '🛒 Errands & Shopping' },
+    { value: 'Child Care', label: '👶 Child Care & Babysitting' },
+    { value: 'Delivery', label: '🚚 Delivery & Transport' },
+    { value: 'Other', label: '📋 Other Services' }
+  ];
+
+  // Budget type options
+  const budgetTypes = [
+    { value: 'fixed', label: 'Fixed Price' },
+    { value: 'hourly', label: 'Hourly Rate' }
   ];
 
   // Validate form in real-time
   const validateForm = (data) => {
     try {
-      gigSchema.parse(data);
+      // Convert budget to number for validation
+      const validationData = {
+        ...data,
+        budget: data.budget ? parseFloat(data.budget) : 0,
+      };
+      gigSchema.parse(validationData);
       setErrors({});
       setIsFormValid(true);
     } catch (error) {
@@ -63,12 +91,15 @@ const PostGigForm = () => {
     validateForm(newData);
   };
 
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, attachments: e.target.files });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check authentication
+    if (!isAuthenticated) {
+      toast.error('Please log in to post a gig');
+      navigate('/login', { state: { from: { pathname: '/post-gig' } } });
+      return;
+    }
 
     if (!isFormValid) {
       toast.error('Please fix the form errors before submitting');
@@ -78,130 +109,202 @@ const PostGigForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Prepare data for API (exclude attachments for now, can be handled separately)
+      // Prepare data for API matching backend schema
       const submitData = {
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
         category: formData.category,
-        pricing: formData.pricing,
-        deliveryTime: formData.deliveryTime,
+        budget: parseFloat(formData.budget),
+        budget_type: formData.budget_type,
+        location: formData.location.trim() || null,
+        skills_required: formData.skills_required.trim() || null,
+        deadline: formData.deadline || null,
       };
 
-      const response = await fetch('/api/gigs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
+      const response = await api.post('/api/gigs', submitData);
+
+      toast.success('🎉 Gig posted successfully!', {
+        duration: 5000,
+        icon: '✅',
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create gig');
-      }
-
-      const result = await response.json();
-      toast.success('Gig posted successfully!');
 
       // Reset form
       setFormData({
         title: '',
         description: '',
         category: '',
-        pricing: '',
-        deliveryTime: '',
-        attachments: null,
+        budget: '',
+        budget_type: 'fixed',
+        location: '',
+        skills_required: '',
+        deadline: '',
       });
       setIsFormValid(false);
+
+      // Redirect to dashboard after short delay
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
     } catch (error) {
-      toast.error('Failed to post gig. Please try again.');
       console.error('Error posting gig:', error);
+      
+      // Handle specific error messages
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please log in again.');
+        navigate('/login', { state: { from: { pathname: '/post-gig' } } });
+      } else if (error.response?.status === 400) {
+        toast.error('Invalid gig data. Please check your inputs.');
+      } else if (error.response?.data?.detail) {
+        toast.error(error.response.data.detail);
+      } else {
+        toast.error('Failed to post gig. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Title */}
+      <div>
+        <FormField
+          label="Gig Title"
+          name="title"
+          type="text"
+          value={formData.title}
+          onChange={handleInputChange}
+          placeholder="e.g., Build a Modern React Website"
+          error={errors.title}
+          required
+          helperText="Minimum 5 characters, maximum 200 characters"
+        />
+      </div>
+
+      {/* Description */}
+      <div>
+        <FormField
+          label="Description"
+          name="description"
+          type="textarea"
+          rows={6}
+          value={formData.description}
+          onChange={handleInputChange}
+          placeholder="Describe your services in detail. What will you deliver? What makes you unique?"
+          error={errors.description}
+          required
+          helperText="Minimum 20 characters. Be specific about deliverables and expertise."
+        />
+      </div>
+
+      {/* Category and Budget Type */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="md:col-span-2">
-          <FormField
-            label="Title"
-            name="title"
-            type="text"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Enter an attractive title for your gig"
-            error={errors.title}
-            required
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <FormField
-            label="Description"
-            name="description"
-            type="textarea"
-            rows={5}
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Describe your services in detail. What will you deliver? What makes you unique?"
-            error={errors.description}
-            required
-          />
-        </div>
-
         <FormSelect
           label="Category"
           name="category"
           value={formData.category}
           onChange={handleInputChange}
           options={categories}
-          placeholder="Choose the most relevant category"
+          placeholder="Select category"
           error={errors.category}
           required
         />
 
-        <FormField
-          label="Pricing / Budget"
-          name="pricing"
-          type="text"
-          value={formData.pricing}
+        <FormSelect
+          label="Budget Type"
+          name="budget_type"
+          value={formData.budget_type}
           onChange={handleInputChange}
-          placeholder="e.g., $50 - $100, Fixed price, Hourly rate"
-          error={errors.pricing}
+          options={budgetTypes}
+          error={errors.budget_type}
           required
+        />
+      </div>
+
+      {/* Budget and Location */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          label={`Budget (KES) - ${formData.budget_type === 'hourly' ? 'Per Hour' : 'Total'}`}
+          name="budget"
+          type="number"
+          min="1"
+          step="0.01"
+          value={formData.budget}
+          onChange={handleInputChange}
+          placeholder="e.g., 5000"
+          error={errors.budget}
+          required
+          helperText="Enter amount in Kenyan Shillings"
         />
 
         <FormField
-          label="Delivery Time"
-          name="deliveryTime"
+          label="Location"
+          name="location"
           type="text"
-          value={formData.deliveryTime}
+          value={formData.location}
           onChange={handleInputChange}
-          placeholder="e.g., 1-3 days, 1 week, 2 weeks"
-          error={errors.deliveryTime}
-          required
+          placeholder="e.g., Nairobi, Kenya or Remote"
+          error={errors.location}
+          helperText="Optional - specify if location matters"
+        />
+      </div>
+
+      {/* Skills and Deadline */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          label="Skills Required"
+          name="skills_required"
+          type="text"
+          value={formData.skills_required}
+          onChange={handleInputChange}
+          placeholder="e.g., React, Node.js, MongoDB"
+          error={errors.skills_required}
+          helperText="Optional - comma separated"
         />
 
-        <div className="md:col-span-2">
-          <FileUpload
-            label="Attachments (Optional)"
-            name="attachments"
-            onChange={handleFileChange}
-            multiple
-            helperText="Upload samples of your work, portfolio files, or any relevant documents"
-          />
+        <FormField
+          label="Deadline"
+          name="deadline"
+          type="date"
+          value={formData.deadline}
+          onChange={handleInputChange}
+          error={errors.deadline}
+          helperText="Optional - when do you need this completed?"
+          min={new Date().toISOString().split('T')[0]}
+        />
+      </div>
+
+      {/* Info Banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-blue-600 text-xl">💡</span>
+          <div className="text-sm text-blue-800">
+            <p className="font-medium mb-1">Tips for a great gig:</p>
+            <ul className="list-disc list-inside space-y-1 text-blue-700">
+              <li>Write a clear, descriptive title</li>
+              <li>Provide detailed requirements in the description</li>
+              <li>Set a realistic budget and deadline</li>
+              <li>List specific skills you're looking for</li>
+            </ul>
+          </div>
         </div>
       </div>
 
+      {/* Submit Button */}
       <div className="pt-6 border-t border-gray-200">
         <SubmitButton
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           loading={isSubmitting}
           loadingText="Creating Your Gig..."
         >
           🚀 Post Gig
         </SubmitButton>
+
+        {!isFormValid && Object.keys(errors).length > 0 && (
+          <p className="mt-3 text-sm text-red-600">
+            Please fix the errors above before submitting
+          </p>
+        )}
       </div>
     </form>
   );

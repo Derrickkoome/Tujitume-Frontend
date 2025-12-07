@@ -1,8 +1,16 @@
-import PostGigPage from './components/PostGigPage'
+import AppRoutes from './routes/AppRoutes'
+import Navbar from './components/Navbar'
+import InstallPWA from './components/InstallPWA'
 
 function App() {
   return (
-    <PostGigPage />
+    <div className="min-h-screen">
+      <Navbar />
+      <main>
+        <AppRoutes />
+      </main>
+      <InstallPWA />
+    </div>
   )
 }
 

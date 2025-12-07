@@ -1,0 +1,31 @@
+name: Branch name check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: ['*']
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          set -e
+          # For PRs, GITHUB_HEAD_REF contains the head branch name; for push use GITHUB_REF
+          BRANCH_NAME=${{ github.event.pull_request.head.ref || github.ref_name }}
+          echo "Branch name: $BRANCH_NAME"
+
+          # Allow exempt branches
+          if [[ "$BRANCH_NAME" == "dev" ]] || [[ "$BRANCH_NAME" == "main" ]] || [[ "$BRANCH_NAME" =~ ^release/.* ]]; then
+            echo "Exempt branch: $BRANCH_NAME"
+            exit 0
+          fi
+
+          if [[ ! "$BRANCH_NAME" =~ ^ft-[a-z0-9._-]+$ ]]; then
+            echo "Branch name does not follow the required pattern: ft-<featurename>"
+            echo "Offending branch: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "Branch name OK"
