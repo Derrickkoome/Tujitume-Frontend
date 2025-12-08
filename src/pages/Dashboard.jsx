@@ -4,25 +4,53 @@ import api from '../lib/api'
 
 export default function Dashboard() {
   const [myGigs, setMyGigs] = useState([])
+  const [stats, setStats] = useState({
+    totalGigs: 0,
+    totalApplications: 0,
+    activeGigs: 0
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    let mounted = true
-    // TODO: fetch user's gigs from backend
-    api.get('/gigs/my')
-      .then((res) => {
-        if (!mounted) return
-        setMyGigs(res.data || [])
-      })
-      .catch((err) => {
-        console.error('Failed to fetch my gigs', err)
-        setError('Failed to load gigs')
-      })
-      .finally(() => mounted && setLoading(false))
-
-    return () => { mounted = false }
+    fetchDashboardData()
   }, [])
+
+  const fetchDashboardData = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      // Fetch user's gigs
+      const gigsRes = await api.get('/api/users/me/gigs')
+      const gigs = gigsRes.data || []
+      setMyGigs(gigs)
+
+      // Calculate stats
+      const activeGigs = gigs.filter(g => g.is_completed === 'false').length
+      
+      // Fetch applications for all gigs
+      let totalApplications = 0
+      for (const gig of gigs) {
+        try {
+          const appsRes = await api.get(`/api/gigs/${gig.id}/applications`)
+          totalApplications += (appsRes.data || []).length
+        } catch (err) {
+          console.warn(`Failed to fetch applications for gig ${gig.id}`, err)
+        }
+      }
+
+      setStats({
+        totalGigs: gigs.length,
+        totalApplications,
+        activeGigs
+      })
+    } catch (err) {
+      console.error('Failed to fetch dashboard data', err)
+      setError('Failed to load dashboard')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) return (
     <div className="min-h-screen p-4 sm:p-6 flex items-center justify-center">
@@ -46,7 +74,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">My Gigs</h3>
-                <p className="text-2xl sm:text-3xl font-bold text-indigo-600 mt-2">{myGigs.length}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-indigo-600 mt-2">{stats.totalGigs}</p>
               </div>
               <div className="text-3xl">📋</div>
             </div>
@@ -55,7 +83,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Applications Received</h3>
-                <p className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">0</p>
+                <p className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">{stats.totalApplications}</p>
               </div>
               <div className="text-3xl">✉️</div>
             </div>
@@ -64,7 +92,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Gigs</h3>
-                <p className="text-2xl sm:text-3xl font-bold text-blue-600 mt-2">0</p>
+                <p className="text-2xl sm:text-3xl font-bold text-blue-600 mt-2">{stats.activeGigs}</p>
               </div>
               <div className="text-3xl">⚡</div>
             </div>
@@ -83,11 +111,31 @@ export default function Dashboard() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {myGigs.map((g) => (
-                  <Link key={g.id} to={`/gigs/${g.id}`} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 transition-all">
-                    <h3 className="font-semibold text-gray-900 dark:text-white truncate">{g.title}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">{g.category}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">Click to view details</p>
-                  </Link>
+                  <div key={g.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 transition-all">
+                    <Link to={`/gigs/${g.id}`}>
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">{g.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {g.budget ? `$${g.budget}` : 'Budget not set'}
+                      </p>
+                      <div className="mt-2">
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          g.is_completed === 'true' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                        }`}>
+                          {g.is_completed === 'true' ? 'Completed' : 'Active'}
+                        </span>
+                      </div>
+                    </Link>
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <Link 
+                        to={`/gigs/${g.id}/applicants`}
+                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                      >
+                        View Applicants →
+                      </Link>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
