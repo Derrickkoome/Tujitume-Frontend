@@ -9,8 +9,8 @@ export default function ApplicationsList() {
 
   useEffect(() => {
     let mounted = true
-    // TODO: fetch user's applications from backend
-    api.get('/applications')
+    // Fetch user's applications from backend
+    api.get('/api/users/me/applications')
       .then((res) => {
         if (!mounted) return
         setApplications(res.data || [])
@@ -56,29 +56,41 @@ export default function ApplicationsList() {
                 <div className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{app.gigTitle || 'Gig Title'}</h2>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Posted by {app.posterName || 'Unknown'}</p>
+                      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">
+                        {app.gig?.title || 'Gig Title'}
+                      </h2>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {app.gig?.location && `📍 ${app.gig.location}`}
+                      </p>
                       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
                           <p className="text-gray-600 dark:text-gray-400"><span className="font-medium">Budget:</span></p>
-                          <p className="text-lg font-semibold text-gray-900 dark:text-white">${app.budget || 'N/A'}</p>
+                          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                            {app.gig?.budget ? `$${app.gig.budget}` : 'N/A'}
+                            {app.gig?.budget_type && ` (${app.gig.budget_type})`}
+                          </p>
                         </div>
                         <div>
                           <p className="text-gray-600 dark:text-gray-400"><span className="font-medium">Status:</span></p>
                           <p className="text-base font-semibold mt-1">
                             <span className={`px-3 py-1 rounded-full text-white text-xs font-semibold ${
-                              app.status === 'Accepted' ? 'bg-green-600' :
-                              app.status === 'Rejected' ? 'bg-red-600' :
-                              'bg-indigo-600'
+                              app.status === 'accepted' ? 'bg-green-600' :
+                              app.status === 'rejected' ? 'bg-red-600' :
+                              'bg-yellow-600'
                             }`}>
-                              {app.status || 'Pending'}
+                              {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                             </span>
                           </p>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">Applied on {new Date(app.createdAt).toLocaleDateString()}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">
+                        Applied on {new Date(app.created_at).toLocaleDateString()}
+                      </p>
                     </div>
-                    <Link to={`/gigs/${app.gigId}`} className="shrink-0 px-4 sm:px-6 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white text-sm rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all font-medium whitespace-nowrap text-center">
+                    <Link 
+                      to={`/gigs/${app.gig_id}`} 
+                      className="shrink-0 px-4 sm:px-6 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white text-sm rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all font-medium whitespace-nowrap text-center"
+                    >
                       View Gig
                     </Link>
                   </div>

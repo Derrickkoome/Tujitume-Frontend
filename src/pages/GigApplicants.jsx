@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import api from '../lib/api'
 import useAuth from '../hooks/useAuth'
 import ReviewForm from '../components/ReviewForm'
+import StarRating from '../components/StarRating'
 
 export default function GigApplicants() {
   const { gigId } = useParams()
@@ -16,6 +17,7 @@ export default function GigApplicants() {
   const [processingId, setProcessingId] = useState(null)
   const [completing, setCompleting] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
+  const [applicantRatings, setApplicantRatings] = useState({})
 
   useEffect(() => {
     if (!user) {
@@ -43,6 +45,20 @@ export default function GigApplicants() {
       // Fetch applications
       const appsRes = await api.get(`/api/gigs/${gigId}/applications`)
       setApplications(appsRes.data)
+
+      // Fetch ratings for each applicant
+      const ratings = {}
+      for (const app of appsRes.data) {
+        if (app.applicant_id) {
+          try {
+            const ratingRes = await api.get(`/api/reviews/${app.applicant_id}`)
+            ratings[app.applicant_id] = ratingRes.data
+          } catch (err) {
+            console.warn(`Failed to fetch rating for applicant ${app.applicant_id}`, err)
+          }
+        }
+      }
+      setApplicantRatings(ratings)
     } catch (err) {
       console.error('Failed to fetch data', err)
       setError(err)
@@ -247,16 +263,19 @@ export default function GigApplicants() {
               }`}
             >
               <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-1">
                   <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-lg">
                     {application.applicant?.name?.charAt(0).toUpperCase() || 
                      application.applicant?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-900">
                       {application.applicant?.name || 'Anonymous Applicant'}
                     </h3>
                     <p className="text-sm text-gray-600">{application.applicant?.email}</p>
+                    {application.applicant?.location && (
+                      <p className="text-sm text-gray-500 mt-1">📍 {application.applicant.location}</p>
+                    )}
                   </div>
                 </div>
 
@@ -275,6 +294,66 @@ export default function GigApplicants() {
                   {application.status === 'pending' && '⏳ Pending'}
                 </span>
               </div>
+
+              {/* Worker Profile Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {/* Skills */}
+                {application.applicant?.skills && application.applicant.skills.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Skills:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {application.applicant.skills.map((skill, idx) => (
+                        <span 
+                          key={idx} 
+                          className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Rating */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Worker Rating:</h4>
+                  {applicantRatings[application.applicant_id] ? (
+                    <div className="flex items-center gap-2">
+                      <StarRating 
+                        rating={Math.round(applicantRatings[application.applicant_id].average_rating)} 
+                        readOnly 
+                        size="sm" 
+                      />
+                      <span className="text-sm font-semibold text-gray-900">
+                        {applicantRatings[application.applicant_id].average_rating.toFixed(1)}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        ({applicantRatings[application.applicant_id].total_reviews} {applicantRatings[application.applicant_id].total_reviews === 1 ? 'review' : 'reviews'})
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No reviews yet</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact Info Row */}
+              {application.applicant?.phone && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700">Contact Phone:</h4>
+                  <p className="text-sm text-gray-600">{application.applicant.phone}</p>
+                </div>
+              )}
+
+              {/* Bio */}
+              {application.applicant?.bio && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">About:</h4>
+                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                    {application.applicant.bio}
+                  </p>
+                </div>
+              )}
 
               {/* Cover Letter */}
               <div className="mb-4">
