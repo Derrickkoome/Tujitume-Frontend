@@ -174,7 +174,7 @@ const PostGigForm = () => {
           type="text"
           value={formData.title}
           onChange={handleInputChange}
-          placeholder="e.g., Build a Modern React Website"
+          placeholder="e.g., Help me clean my house this weekend"
           error={errors.title}
           required
           helperText="Minimum 5 characters, maximum 200 characters"

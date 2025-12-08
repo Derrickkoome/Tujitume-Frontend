@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import useAuth from '../hooks/useAuth'
+import ThemeToggle from './ThemeToggle'
 
 export default function Navbar() {
   const { user, loading, signOut } = useAuth();
@@ -21,18 +22,19 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-50">
+    <nav className="w-full bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-xl font-bold text-gray-900">Tujitume</Link>
+            <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white">Tujitume</Link>
             <div className="hidden sm:flex gap-6">
-              <Link to="/gigs" className="text-sm text-gray-600 hover:text-gray-900">Browse</Link>
-              <Link to="/post-gig" className="text-sm text-gray-600 hover:text-gray-900">Post Gig</Link>
+              <Link to="/gigs" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Browse</Link>
+              <Link to="/post-gig" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Post Gig</Link>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {!loading && !user && (
               <>
                 <Link to="/login" className="text-sm px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800">Login</Link>

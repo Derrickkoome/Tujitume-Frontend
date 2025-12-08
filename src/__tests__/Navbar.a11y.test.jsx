@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import { ThemeProvider } from '../contexts/ThemeContext'
 
 jest.mock('../hooks/useAuth', () => {
   return jest.fn(() => ({
@@ -11,11 +12,28 @@ jest.mock('../hooks/useAuth', () => {
   }))
 })
 
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 test('Navbar renders with accessible navigation and buttons', () => {
   render(
-    <MemoryRouter>
-      <Navbar />
-    </MemoryRouter>
+    <ThemeProvider>
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>
+    </ThemeProvider>
   )
 
   // Navbar should have a navigation element or be semantically structured
@@ -40,9 +58,11 @@ test('Navbar renders with accessible navigation and buttons', () => {
 
 test('Navbar displays user info when authenticated', () => {
   render(
-    <MemoryRouter>
-      <Navbar />
-    </MemoryRouter>
+    <ThemeProvider>
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>
+    </ThemeProvider>
   )
 
   // Login button should be present when user is not authenticated
