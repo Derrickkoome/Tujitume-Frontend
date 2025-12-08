@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #ea580c;
-  --color-secondary: #c2410c;
+  --color-primary: #d4af37;
+  --color-secondary: #b8941e;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   font-weight: 400;
 
-  color: #111827;
+  color: #000000;
   background-color: #ffffff;
 
   font-synthesis: none;
@@ -19,11 +19,11 @@
 
 a {
   font-weight: 500;
-  color: #ea580c;
+  color: #d4af37;
   text-decoration: inherit;
 }
 a:hover {
-  color: #c2410c;
+  color: #b8941e;
 }
 
 body {
@@ -46,22 +46,22 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #ea580c;
-  color: white;
+  background-color: #d4af37;
+  color: #000000;
   cursor: pointer;
   transition: all 0.25s;
 }
 button:hover {
-  background-color: #c2410c;
+  background-color: #b8941e;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 button:active {
   transform: translateY(0);
 }
 button:focus,
 button:focus-visible {
-  outline: 3px solid rgba(234, 88, 12, 0.5);
+  outline: 3px solid rgba(212, 175, 55, 0.5);
   outline-offset: 2px;
 }
 button:disabled {

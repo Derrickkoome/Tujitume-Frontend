@@ -10,7 +10,7 @@ const FormSelect = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">
+      <label htmlFor={name} className="block text-sm font-semibold text-black dark:text-gray-200 mb-1">
         {label} {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <div className="relative">
@@ -19,10 +19,10 @@ const FormSelect = ({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-300 appearance-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+          className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 hover:border-gray-300 appearance-none bg-white dark:bg-gray-800 text-black dark:text-white ${
             error
               ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-              : 'border-gray-200 dark:border-gray-600'
+              : 'border-gray-300 dark:border-gray-600'
           }`}
         >
           <option value="">{placeholder || 'Select an option'}</option>

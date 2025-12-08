@@ -13,15 +13,15 @@ const FormField = ({
   max,
   step
 }) => {
-  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-gray-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
+  const baseInputClasses = `w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 hover:border-gray-300 bg-white dark:bg-gray-800 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-500 ${
     error
       ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-200 dark:border-gray-600'
+      : 'border-gray-300 dark:border-gray-600'
   }`;
 
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">
+      <label htmlFor={name} className="block text-sm font-semibold text-black dark:text-gray-200 mb-1">
         {label} {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       {type === 'textarea' ? (
