@@ -74,19 +74,21 @@ export default function Profile() {
   }
 
   const handleAddSkill = () => {
-    if (newSkill.trim() && !profileData.skills.includes(newSkill.trim())) {
+    const skills = Array.isArray(profileData.skills) ? profileData.skills : []
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
       setProfileData({
         ...profileData,
-        skills: [...profileData.skills, newSkill.trim()]
+        skills: [...skills, newSkill.trim()]
       })
       setNewSkill('')
     }
   }
 
   const handleRemoveSkill = (skillToRemove) => {
+    const skills = Array.isArray(profileData.skills) ? profileData.skills : []
     setProfileData({
       ...profileData,
-      skills: profileData.skills.filter(s => s !== skillToRemove)
+      skills: skills.filter(s => s !== skillToRemove)
     })
   }
 
@@ -192,7 +194,7 @@ export default function Profile() {
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {profileData.skills.map((skill, idx) => (
+                {Array.isArray(profileData.skills) && profileData.skills.map((skill, idx) => (
                   <span
                     key={idx}
                     className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium flex items-center gap-2"
@@ -229,7 +231,7 @@ export default function Profile() {
               </div>
             )}
             
-            {profileData.skills && profileData.skills.length > 0 && (
+            {Array.isArray(profileData.skills) && profileData.skills.length > 0 && (
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Skills</h3>
                 <div className="flex flex-wrap gap-2">
@@ -293,7 +295,7 @@ export default function Profile() {
         </div>
 
         {/* Reviews Section */}
-        {reviews.length > 0 && (
+        {Array.isArray(reviews) && reviews.length > 0 && (
           <div className="border-t pt-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Reviews</h2>
             <div className="space-y-4">
