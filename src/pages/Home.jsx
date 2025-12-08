@@ -24,7 +24,7 @@ const Home = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-orange-50">
+    <div className="w-full min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="w-full pt-20 pb-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -37,11 +37,11 @@ const Home = () => {
 
           {/* Main Headline */}
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Turn Your Skills Into <span className="text-orange-500">Income</span>
+            Turn Your Skills Into <span className="text-orange-600">Income</span>
           </h1>
 
           {/* Subheading */}
-          <p className="text-lg text-gray-800 font-medium mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 font-medium mb-10 max-w-2xl mx-auto">
             Post casual jobs like cleaning, delivery, errands, and small repairs. Connect with local workers who can get things done quickly and reliably.
           </p>
 
@@ -82,11 +82,11 @@ const Home = () => {
                 >
                   <div className="p-6">
                     {/* Gig Category */}
-                    <div className="text-orange-500 text-sm font-semibold mb-2">
+                    <div className="text-orange-600 text-sm font-semibold mb-2">
                       {gig.category || 'General'}
                     </div>
                     {/* Price */}
-                    <div className="text-orange-500 text-xl font-bold mb-3">
+                    <div className="text-orange-600 text-xl font-bold mb-3">
                       KES {gig.budget}
                     </div>
                     {/* Title */}
@@ -94,11 +94,11 @@ const Home = () => {
                       {gig.title}
                     </h3>
                     {/* Description */}
-                    <p className="text-gray-700 text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-800 text-sm mb-4 line-clamp-2">
                       {gig.description}
                     </p>
                     {/* Location & Time */}
-                    <div className="flex items-center justify-between text-sm text-gray-600 font-medium">
+                    <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
                       <span>{gig.location || 'Nairobi'}</span>
                       <span>{Math.floor(Math.random() * 24) || 2} hours ago</span>
                     </div>
@@ -108,8 +108,8 @@ const Home = () => {
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-gray-700 text-lg font-medium mb-4">No gigs available yet</p>
-              <Link to="/post-gig" className="text-orange-500 text-lg font-semibold hover:underline">
+              <p className="text-gray-800 text-lg font-semibold mb-4">No gigs available yet</p>
+              <Link to="/post-gig" className="text-orange-600 text-lg font-semibold hover:underline">
                 Be the first to post a gig
               </Link>
             </div>

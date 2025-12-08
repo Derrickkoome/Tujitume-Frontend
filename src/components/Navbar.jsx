@@ -28,8 +28,8 @@ export default function Navbar() {
           <div className="flex items-center gap-6">
             <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white">Tujitume</Link>
             <div className="hidden sm:flex gap-6">
-              <Link to="/gigs" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Browse</Link>
-              <Link to="/post-gig" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Post Gig</Link>
+              <Link to="/gigs" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Browse</Link>
+              <Link to="/post-gig" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Post Gig</Link>
             </div>
           </div>
 
@@ -37,8 +37,8 @@ export default function Navbar() {
             <ThemeToggle />
             {!loading && !user && (
               <>
-                <Link to="/login" className="text-sm px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800">Login</Link>
-                <Link to="/post-gig" className="text-sm px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Post a Gig</Link>
+                <Link to="/login" className="text-sm font-medium px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800">Login</Link>
+                <Link to="/post-gig" className="text-sm font-medium px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">Post a Gig</Link>
               </>
             )}
 
