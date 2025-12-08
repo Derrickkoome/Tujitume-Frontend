@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { 
   onAuthStateChanged, 
-  signInWithPopup as fbSignInWithPopup, 
+  signInWithPopup as fbSignInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as fbSignOut, 
   getIdToken,
   createUserWithEmailAndPassword,
@@ -18,6 +20,17 @@ export default function useAuth() {
 
   // Listen to auth state changes and manage token
   useEffect(() => {
+    // Check for redirect result on mount
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log('Redirect sign-in successful');
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect sign-in error', error);
+      });
+
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
         setUser(u);
@@ -75,9 +88,11 @@ export default function useAuth() {
 
   const signIn = useCallback(async () => {
     try {
-      const result = await fbSignInWithPopup(auth, googleProvider);
-      // Token is automatically set by onAuthStateChanged listener
-      return result.user;
+      // Use redirect instead of popup to avoid COOP warnings
+      // For mobile-friendly experience and no popup blockers
+      await signInWithRedirect(auth, googleProvider);
+      // User will be redirected away and back
+      // Result is handled by getRedirectResult in useEffect
     } catch (error) {
       console.error('signIn error', error);
       throw error;
