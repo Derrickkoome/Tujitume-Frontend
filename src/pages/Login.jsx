@@ -10,7 +10,6 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const from = location.state?.from?.pathname || '/';
   
   const [formData, setFormData] = useState({
     email: '',
@@ -21,9 +20,10 @@ const Login = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
-  }, [user, loading, navigate, from]);
+  }, [user, loading, navigate, location.state?.from?.pathname]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +53,7 @@ const Login = () => {
     try {
       await signInWithEmail(formData.email, formData.password);
       toast.success('Signed in successfully!');
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (error) {
       console.error('Email login failed', error);

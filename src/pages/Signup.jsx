@@ -9,7 +9,6 @@ export default function Signup() {
   const { signUpWithEmail, signIn, user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
 
   const [formData, setFormData] = useState({
     name: '',
@@ -23,9 +22,10 @@ export default function Signup() {
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
-  }, [user, loading, navigate, from]);
+  }, [user, loading, navigate, location.state?.from?.pathname]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -70,8 +70,9 @@ export default function Signup() {
 
     setIsSubmitting(true);
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.name);
+      await signUpWithEmail(formData.email, formData.password, formData.displayName);
       toast.success('Account created successfully!');
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (error) {
       console.error('Signup error:', error);
