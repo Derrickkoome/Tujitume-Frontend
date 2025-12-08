@@ -12,6 +12,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebaseConfig';
+import api from '../lib/api';
 
 export default function useAuth() {
   const [user, setUser] = useState(null);
@@ -41,6 +42,22 @@ export default function useAuth() {
           // Store token in localStorage for API requests
           localStorage.setItem('firebaseToken', idToken);
           localStorage.setItem('userId', u.uid);
+          
+          // Ensure user exists in backend (Google sign-in redirect case)
+          try {
+            await api.post('/users/register', {
+              email: u.email,
+              name: u.displayName || u.email.split('@')[0],
+              uid: u.uid
+            }, {
+              headers: { Authorization: `Bearer ${idToken}` }
+            });
+          } catch (backendError) {
+            // Ignore if user already exists or other errors
+            if (backendError.response?.status !== 409) {
+              console.error('Backend user sync error:', backendError);
+            }
+          }
         } catch (error) {
           console.error('Failed to get ID token', error);
         }
@@ -116,6 +133,22 @@ export default function useAuth() {
       if (displayName) {
         await updateProfile(result.user, { displayName });
       }
+      
+      // Register user in backend database
+      try {
+        const token = await result.user.getIdToken();
+        await api.post('/users/register', {
+          email: result.user.email,
+          name: displayName || result.user.displayName || email.split('@')[0],
+          uid: result.user.uid
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (backendError) {
+        console.error('Backend registration error:', backendError);
+        // Don't throw - user is created in Firebase, backend will sync later
+      }
+      
       return result.user;
     } catch (error) {
       console.error('signUpWithEmail error', error);
@@ -126,6 +159,24 @@ export default function useAuth() {
   const signInWithEmail = useCallback(async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Ensure user exists in backend (handle cases where Firebase user exists but backend doesn't)
+      try {
+        const token = await result.user.getIdToken();
+        await api.post('/users/register', {
+          email: result.user.email,
+          name: result.user.displayName || email.split('@')[0],
+          uid: result.user.uid
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (backendError) {
+        // Ignore if user already exists (409) or other backend errors
+        if (backendError.response?.status !== 409) {
+          console.error('Backend sync error:', backendError);
+        }
+      }
+      
       return result.user;
     } catch (error) {
       console.error('signInWithEmail error', error);
