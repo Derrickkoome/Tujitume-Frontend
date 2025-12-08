@@ -94,15 +94,13 @@ export default function Signup() {
   const handleGoogleSignup = async () => {
     try {
       setIsSubmitting(true);
+      // signInWithRedirect will redirect away from this page
+      // The user will return after authentication and useEffect will handle navigation
       await signIn();
-      toast.success('Signed up successfully!');
-      navigate(from, { replace: true });
+      // No toast or navigate here - user gets redirected away
     } catch (error) {
       console.error('Google signup error:', error);
-      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-        toast.error('Google sign-up failed. Please try again.');
-      }
-    } finally {
+      toast.error('Google sign-up failed. Please try again.');
       setIsSubmitting(false);
     }
   };

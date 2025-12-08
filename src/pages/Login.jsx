@@ -75,19 +75,13 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       setIsSigningIn(true);
+      // signInWithRedirect will redirect away from this page
+      // The user will return after authentication and useEffect will handle navigation
       await signIn();
-      toast.success('Signed in successfully!');
-      navigate(from, { replace: true });
+      // No toast or navigate here - user gets redirected away
     } catch (error) {
       console.error('Google sign-in failed', error);
-      if (error.code === 'auth/popup-closed-by-user') {
-        toast.error('Sign-in cancelled');
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        toast.error('Another sign-in request in progress');
-      } else {
-        toast.error('Sign-in failed. Please try again.');
-      }
-    } finally {
+      toast.error('Sign-in failed. Please try again.');
       setIsSigningIn(false);
     }
   };

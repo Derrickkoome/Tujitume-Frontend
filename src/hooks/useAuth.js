@@ -21,10 +21,13 @@ export default function useAuth() {
 
   // Listen to auth state changes and manage token
   useEffect(() => {
-    // Check for redirect result on mount
+    let handledRedirect = false;
+    
+    // Check for redirect result on mount (only once)
     getRedirectResult(auth)
       .then((result) => {
-        if (result) {
+        if (result && !handledRedirect) {
+          handledRedirect = true;
           console.log('Redirect sign-in successful');
         }
       })
