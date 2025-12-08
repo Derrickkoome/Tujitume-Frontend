@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithPopup as fbSignInWithPopup,
@@ -18,22 +18,24 @@ export default function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
+  const handledRedirectRef = useRef(false);
+  const syncedUsersRef = useRef(new Set());
 
   // Listen to auth state changes and manage token
   useEffect(() => {
-    let handledRedirect = false;
-    
     // Check for redirect result on mount (only once)
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result && !handledRedirect) {
-          handledRedirect = true;
-          console.log('Redirect sign-in successful');
-        }
-      })
-      .catch((error) => {
-        console.error('Redirect sign-in error', error);
-      });
+    if (!handledRedirectRef.current) {
+      handledRedirectRef.current = true;
+      getRedirectResult(auth)
+        .then((result) => {
+          if (result) {
+            console.log('Redirect sign-in successful');
+          }
+        })
+        .catch((error) => {
+          console.error('Redirect sign-in error', error);
+        });
+    }
 
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
@@ -46,19 +48,22 @@ export default function useAuth() {
           localStorage.setItem('firebaseToken', idToken);
           localStorage.setItem('userId', u.uid);
           
-          // Ensure user exists in backend (Google sign-in redirect case)
-          try {
-            await api.post('/users/register', {
-              email: u.email,
-              name: u.displayName || u.email.split('@')[0],
-              uid: u.uid
-            }, {
-              headers: { Authorization: `Bearer ${idToken}` }
-            });
-          } catch (backendError) {
-            // Ignore if user already exists or other errors
-            if (backendError.response?.status !== 409) {
-              console.error('Backend user sync error:', backendError);
+          // Ensure user exists in backend (only once per user)
+          if (!syncedUsersRef.current.has(u.uid)) {
+            syncedUsersRef.current.add(u.uid);
+            try {
+              await api.post('/users/register', {
+                email: u.email,
+                name: u.displayName || u.email.split('@')[0],
+                uid: u.uid
+              }, {
+                headers: { Authorization: `Bearer ${idToken}` }
+              });
+            } catch (backendError) {
+              // Ignore if user already exists or other errors
+              if (backendError.response?.status !== 409) {
+                console.error('Backend user sync error:', backendError);
+              }
             }
           }
         } catch (error) {
