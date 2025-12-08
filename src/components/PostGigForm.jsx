@@ -76,9 +76,11 @@ const PostGigForm = () => {
       setIsFormValid(true);
     } catch (error) {
       const validationErrors = {};
-      error.errors.forEach((err) => {
-        validationErrors[err.path[0]] = err.message;
-      });
+      if (error.errors && Array.isArray(error.errors)) {
+        error.errors.forEach((err) => {
+          validationErrors[err.path[0]] = err.message;
+        });
+      }
       setErrors(validationErrors);
       setIsFormValid(false);
     }

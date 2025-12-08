@@ -177,7 +177,7 @@ export default function GigDetails() {
         </div>
 
         {/* Skills Required */}
-        {gig.skills_required && gig.skills_required.length > 0 && (
+        {Array.isArray(gig.skills_required) && gig.skills_required.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-3">Skills Required</h2>
             <div className="flex flex-wrap gap-2">

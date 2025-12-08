@@ -43,17 +43,19 @@ export default function GigList() {
   // Extract all unique skills from gigs
   const allSkills = useMemo(() => {
     const skillsSet = new Set()
-    gigs.forEach(gig => {
-      if (gig.skills_required && Array.isArray(gig.skills_required)) {
-        gig.skills_required.forEach(skill => skillsSet.add(skill))
-      }
-    })
+    if (Array.isArray(gigs)) {
+      gigs.forEach(gig => {
+        if (gig && gig.skills_required && Array.isArray(gig.skills_required)) {
+          gig.skills_required.forEach(skill => skillsSet.add(skill))
+        }
+      })
+    }
     return Array.from(skillsSet).sort()
   }, [gigs])
 
   // Filter and sort gigs
   const filteredAndSortedGigs = useMemo(() => {
-    let result = [...gigs]
+    let result = Array.isArray(gigs) ? [...gigs] : []
 
     // Search filter
     if (searchQuery.trim()) {

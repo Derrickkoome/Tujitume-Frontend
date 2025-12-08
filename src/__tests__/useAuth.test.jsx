@@ -6,7 +6,14 @@ import useAuth from '../hooks/useAuth'
 jest.mock('firebase/auth', () => ({
   onAuthStateChanged: jest.fn(),
   signInWithPopup: jest.fn(),
-  signOut: jest.fn()
+  signInWithRedirect: jest.fn(),
+  getRedirectResult: jest.fn(() => Promise.resolve(null)),
+  signOut: jest.fn(),
+  getIdToken: jest.fn(),
+  createUserWithEmailAndPassword: jest.fn(),
+  signInWithEmailAndPassword: jest.fn(),
+  sendPasswordResetEmail: jest.fn(),
+  updateProfile: jest.fn()
 }))
 
 jest.mock('../firebaseConfig', () => ({
@@ -23,8 +30,13 @@ function TestComponent() {
 test('useAuth updates when onAuthStateChanged fires', async () => {
   const { onAuthStateChanged } = require('firebase/auth')
   // Simulate onAuthStateChanged invoking callback with a fake user
+  const mockUser = {
+    email: 'test@example.com',
+    uid: 'u1',
+    getIdToken: jest.fn(() => Promise.resolve('mock-token'))
+  }
   onAuthStateChanged.mockImplementation((auth, cb) => {
-    setTimeout(() => cb({ email: 'test@example.com', uid: 'u1' }), 0)
+    setTimeout(() => cb(mockUser), 0)
     return () => {}
   })
 

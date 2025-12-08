@@ -298,7 +298,7 @@ export default function GigApplicants() {
               {/* Worker Profile Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {/* Skills */}
-                {application.applicant?.skills && application.applicant.skills.length > 0 && (
+                {Array.isArray(application.applicant?.skills) && application.applicant.skills.length > 0 && (
                   <div>
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">Skills:</h4>
                     <div className="flex flex-wrap gap-2">
