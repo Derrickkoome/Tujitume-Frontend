@@ -1,5 +1,6 @@
 // Service Worker for Tujitume Progressive Web App
-const CACHE_NAME = 'tujitume-v2';
+// Bump the cache name to force an update when this file changes
+const CACHE_NAME = 'tujitume-v3';
 const GIGS_CACHE = 'tujitume-gigs-v1';
 const ASSETS_TO_CACHE = [
   '/',
@@ -46,6 +47,29 @@ self.addEventListener('fetch', (event) => {
 
   // Skip Vite dev server requests (HMR and modules)
   if (url.pathname.includes('@vite') || url.pathname.includes('@react-refresh') || url.pathname.includes('.jsx')) {
+    return;
+  }
+
+  // Navigation requests (e.g., SPA routes) - use network-first to avoid
+  // serving stale index.html that can cause reload loops after deploys
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request);
+          // Cache a fresh copy of the shell for offline
+          const cache = await caches.open(CACHE_NAME);
+          cache.put('/', networkResponse.clone());
+          return networkResponse;
+        } catch (err) {
+          // If offline, try cached shell, then offline fallback
+          const cachedShell = await caches.match('/index.html') || await caches.match('/');
+          if (cachedShell) return cachedShell;
+          const offline = await caches.match('/offline.html');
+          return offline || new Response('Offline', { status: 503 });
+        }
+      })()
+    );
     return;
   }
 
