@@ -62,7 +62,7 @@ export default function Dashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
@@ -140,7 +140,7 @@ export default function Dashboard() {
               </div>
             )}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <Link to="/post-gig" className="inline-flex items-center justify-center px-4 sm:px-6 py-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all font-medium text-sm sm:text-base">
+              <Link to="/post-gig" className="inline-flex items-center justify-center px-4 sm:px-6 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all font-medium text-sm sm:text-base">
                 <span className="mr-2">+</span> Post New Gig
               </Link>
             </div>
