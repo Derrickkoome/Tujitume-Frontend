@@ -41,7 +41,7 @@ const Home = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-800 font-medium mb-10 max-w-2xl mx-auto">
             Post casual jobs like cleaning, delivery, errands, and small repairs. Connect with local workers who can get things done quickly and reliably.
           </p>
 
@@ -70,7 +70,7 @@ const Home = () => {
 
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">Loading gigs...</p>
+              <p className="text-gray-700 font-medium">Loading gigs...</p>
             </div>
           ) : gigs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -94,11 +94,11 @@ const Home = () => {
                       {gig.title}
                     </h3>
                     {/* Description */}
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-700 text-sm mb-4 line-clamp-2">
                       {gig.description}
                     </p>
                     {/* Location & Time */}
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-600 font-medium">
                       <span>{gig.location || 'Nairobi'}</span>
                       <span>{Math.floor(Math.random() * 24) || 2} hours ago</span>
                     </div>
@@ -108,8 +108,8 @@ const Home = () => {
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-gray-500 mb-4">No gigs available yet</p>
-              <Link to="/post-gig" className="text-orange-500 font-semibold hover:underline">
+              <p className="text-gray-700 text-lg font-medium mb-4">No gigs available yet</p>
+              <Link to="/post-gig" className="text-orange-500 text-lg font-semibold hover:underline">
                 Be the first to post a gig
               </Link>
             </div>
