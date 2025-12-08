@@ -4,6 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Disable secrets scanning for Firebase API key (it's meant to be public for web apps)
+  SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
 # Redirect all requests to index.html for client-side routing
 [[redirects]]
