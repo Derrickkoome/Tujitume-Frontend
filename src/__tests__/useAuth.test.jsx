@@ -2,6 +2,16 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import useAuth from '../hooks/useAuth'
 
+// Mock the api module to avoid import.meta.env issues in Jest
+jest.mock('../lib/api', () => ({
+  default: {
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+    get: jest.fn(() => Promise.resolve({ data: {} })),
+    put: jest.fn(() => Promise.resolve({ data: {} })),
+    delete: jest.fn(() => Promise.resolve({ data: {} }))
+  }
+}))
+
 // Mock firebase/auth and firebaseConfig used by the hook
 jest.mock('firebase/auth', () => ({
   onAuthStateChanged: jest.fn(),
